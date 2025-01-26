@@ -7,26 +7,18 @@ import java.util.Scanner;
 
 public class Dicionario {
 	private String idiomaCorrente;
-	private String idiomaDeTraducao;
-	private ArrayList<String> idiomas = new ArrayList<String>(Arrays.asList("inglês", "português", "espanhol", "alemão"));
  	
-	public Dicionario(String x) {
+	public Dicionario(String x) throws Exception {
+//		if verificarIdioma(x) {
 		this.idiomaCorrente = x;
+//		}
 	}
 	
-	public void setIdioma(String idioma) throws Exception {
-		if (idiomas.contains(idioma)) {
-			idiomaCorrente = idioma;
-			
-		} else {
-			throw new Exception("Idioma indisponível");
-		}
+	private void verificarIdioma(String x) {
+		// TODO
 	}
-	
-	
-	public ArrayList<String> getIdiomas() {
-		return idiomas;
-	}
+		
+
 	
 	public ArrayList<String> traduzirParaPortugues(String termo) {
 		ArrayList<String> traducoes = new ArrayList<String>();
@@ -53,7 +45,7 @@ public class Dicionario {
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Dicionario dicio = new Dicionario("inglês");
 		ArrayList<String> teste = dicio.carregarParesDeTraducao("inglês");
 		for (String linha : teste) {
