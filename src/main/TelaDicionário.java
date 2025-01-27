@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,29 +11,21 @@ import java.util.Objects;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.AbstractListModel;
-import javax.swing.JSpinner;
-import javax.swing.JTextPane;
-import javax.swing.DropMode;
-import javax.swing.JScrollPane;
-import javax.swing.JScrollBar;
-import java.awt.Font;
 
 public class TelaDicionário {
 
 	private JFrame frameDicionário;
 	private JTextField palavraParaTraduzir;
+	static Dicionario dicionario;
 
 	/**
 	 * Launch the application.
@@ -43,6 +36,7 @@ public class TelaDicionário {
 				try {
 					TelaDicionário window = new TelaDicionário();
 					window.frameDicionário.setVisible(true);
+					dicionario = new Dicionario("Português");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -89,8 +83,7 @@ public class TelaDicionário {
 		});
 		
 		comboBoxTraducao.setModel(new DefaultComboBoxModel<String>(
-				new String[] { "Português    >    Inglês", "Português    >    Espanhol", "Português    >    Alemão",
-						"Inglês    >    Português", "Espanhol    >    Português", "Alemão    >    Português" }));
+				new String[] { montarStringDeTraducao() }));
 		
 		definirBandeiras(comboBoxTraducao, labelsBandeiras);
 		
@@ -177,4 +170,16 @@ public class TelaDicionário {
 		String[] arrayIdiomas = idiomas.replace(" ", "").split(">");
 	    return new ArrayList<>(Arrays.asList(arrayIdiomas));
 	}
+	
+	private String[] montarStringDeTraducao() {
+		String[] idiomasArray;
+		ArrayList<String> idiomas = dicionario.getIdiomas();
+		
+		for (String idioma : dicionario.getIdiomas()) {
+			
+		}
+
+	}
+	
+	
 }
