@@ -3,8 +3,6 @@ package main;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.TextArea;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -36,11 +34,11 @@ public class TelaDicionário {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					dicionario = new Dicionario("Português");
+					dicionario = new Dicionario("Inglês");
 					TelaDicionário window = new TelaDicionário();
 					window.frameDicionário.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage());
 				}
 			}
 		});
@@ -66,22 +64,58 @@ public class TelaDicionário {
 		
 		JLabel labelBandeira1 = new JLabel("");
 		labelBandeira1.setIcon(new ImageIcon(TelaDicionário.class.getResource("/imagens/Português.png")));
-		labelBandeira1.setBounds(94, 0, 60, 41);
+		labelBandeira1.setBounds(102, 0, 60, 41);
 		frameDicionário.getContentPane().add(labelBandeira1);
 
 		JLabel labelBandeira2 = new JLabel("");
 		labelBandeira2.setIcon(new ImageIcon(TelaDicionário.class.getResource("/imagens/Inglês.png")));
 		labelBandeira2.setBounds(281, 0, 60, 41);
 		frameDicionário.getContentPane().add(labelBandeira2);
+
+		JLabel titulo = new JLabel("TRAIN");
+		titulo.setFont(new Font("Dialog", Font.BOLD, 16));
+		titulo.setBounds(192, 12, 50, 17);
+		frameDicionário.getContentPane().add(titulo);
+
+		JLabel feedback = new JLabel("");
+		feedback.setFont(new Font("Dialog", Font.BOLD, 14));
+		feedback.setBounds(34, 222, 364, 27);
+		frameDicionário.getContentPane().add(feedback);
+
+		termoDigitado = new JTextField();
+		termoDigitado.setFont(new Font("Dialog", Font.PLAIN, 16));
+		termoDigitado.setToolTipText("");
+		termoDigitado.setBounds(35, 91, 182, 26);
+		frameDicionário.getContentPane().add(termoDigitado);
+		termoDigitado.setColumns(10);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(229, 91, 169, 88);
+		frameDicionário.getContentPane().add(scrollPane);
+		
+		JTextArea resultadoTradução = new JTextArea();
+		resultadoTradução.setFont(new Font("Dialog", Font.PLAIN, 16));
+		resultadoTradução.setEditable(false);
+		scrollPane.setViewportView(resultadoTradução);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(34, 123, 183, 56);
+		frameDicionário.getContentPane().add(scrollPane_1);
+		
+		JTextArea resultadoLocalização = new JTextArea();
+		resultadoLocalização.setFont(new Font("Dialog", Font.PLAIN, 16));
+		resultadoLocalização.setEditable(false);
+		scrollPane_1.setViewportView(resultadoLocalização);
 		
 		ArrayList<JLabel> labelsBandeiras = new ArrayList<JLabel>(Arrays.asList(labelBandeira1, labelBandeira2));
-
+		
 		JComboBox<String> comboBoxTraducao = new JComboBox<String>();
 		comboBoxTraducao.setFont(new Font("Dialog", Font.BOLD, 14));
 		comboBoxTraducao.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				definirBandeiras(comboBoxTraducao, labelsBandeiras);
 				definirIdiomasAtuais(comboBoxTraducao.getSelectedItem().toString());
+				limparCampos(resultadoLocalização, resultadoTradução, feedback);
 			}
 		});
 		
@@ -98,49 +132,6 @@ public class TelaDicionário {
 
 		comboBoxTraducao.setBounds(34, 47, 364, 26);
 		frameDicionário.getContentPane().add(comboBoxTraducao);
-
-		JLabel titulo = new JLabel("Tradutor");
-		titulo.setFont(new Font("Dialog", Font.BOLD, 16));
-		titulo.setBounds(176, 12, 79, 17);
-		frameDicionário.getContentPane().add(titulo);
-
-		JLabel feedback = new JLabel("");
-		feedback.setBounds(34, 230, 364, 27);
-		frameDicionário.getContentPane().add(feedback);
-
-		JButton btnTraduzir = new JButton("Traduzir");
-		btnTraduzir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-
-		btnTraduzir.setBounds(293, 191, 105, 27);
-		frameDicionário.getContentPane().add(btnTraduzir);
-		
-		termoDigitado = new JTextField();
-		termoDigitado.setFont(new Font("Dialog", Font.PLAIN, 16));
-		termoDigitado.setToolTipText("");
-		termoDigitado.setBounds(35, 91, 182, 26);
-		frameDicionário.getContentPane().add(termoDigitado);
-		termoDigitado.setColumns(10);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(229, 91, 169, 88);
-		frameDicionário.getContentPane().add(scrollPane);
-		
-		JTextArea resultadoTraduçãoLocalização = new JTextArea();
-		resultadoTraduçãoLocalização.setFont(new Font("Dialog", Font.PLAIN, 16));
-		resultadoTraduçãoLocalização.setEditable(false);
-		scrollPane.setViewportView(resultadoTraduçãoLocalização);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(34, 123, 183, 56);
-		frameDicionário.getContentPane().add(scrollPane_1);
-		
-		JTextArea resultadoLozalização = new JTextArea();
-		resultadoLozalização.setFont(new Font("Dialog", Font.PLAIN, 16));
-		resultadoLozalização.setEditable(false);
-		scrollPane_1.setViewportView(resultadoLozalização);
 		
 		JButton btnNewButton = new JButton("Localizar");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -149,9 +140,8 @@ public class TelaDicionário {
 				String termo = termoDigitado.getText();
 				
 				if (termo.isEmpty()) {
+					limparCampos(resultadoLocalização, resultadoTradução, feedback);
 					feedback.setText("Digite alguma coisa!");
-					resultadoTraduçãoLocalização.setText("");
-					resultadoLozalização.setText("");
 					return;
 				}
 				
@@ -162,16 +152,15 @@ public class TelaDicionário {
 				}
 				
 				if (palavrasLocalizadas.isEmpty()) {
-					feedback.setText("Nenhum termo encontrado");
-					resultadoTraduçãoLocalização.setText("");
-					resultadoLozalização.setText("");
+					limparCampos(resultadoLocalização, resultadoTradução, feedback);
+					feedback.setText("Nenhuma palavra localizada!");
 					
 				} else {
-					resultadoLozalização.setText("");
+					limparCampos(resultadoLocalização, resultadoTradução, feedback);
 					for (String palavra : palavrasLocalizadas) {
-						resultadoLozalização.append(palavra + "\n");
+						resultadoLocalização.append(palavra + "\n");
 					}
-					feedback.setText("Palavras localizadas com sucesso");
+					feedback.setText("Localização feita com sucesso!");
 				}
 			}
 		});
@@ -181,10 +170,10 @@ public class TelaDicionário {
 		JButton btnLimpar = new JButton("Limpar");
 		btnLimpar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				resultadoTraduçãoLocalização.setText("");
+				resultadoTradução.setText("");
 				termoDigitado.setText("");
 				feedback.setText("");
-				resultadoLozalização.setText("");
+				resultadoLocalização.setText("");
 			}
 		});
 		btnLimpar.setBounds(164, 191, 105, 27);
@@ -193,6 +182,42 @@ public class TelaDicionário {
 		JLabel lblNewLabel = new JLabel("Digite aqui:");
 		lblNewLabel.setBounds(35, 76, 88, 17);
 		frameDicionário.getContentPane().add(lblNewLabel);
+		
+		JButton btnTraduzir = new JButton("Traduzir");
+		btnTraduzir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> palavrasTraduzidas;
+				String termo = termoDigitado.getText();
+				
+				if (termo.isEmpty()) {
+					limparCampos(resultadoLocalização, resultadoTradução, feedback);
+					feedback.setText("Digite alguma coisa!");
+					return;
+				}
+				
+				if (dicionario.getIdiomaCorrente().equalsIgnoreCase("Português")) {
+					palavrasTraduzidas = dicionario.traduzirParaPortugues(termo);
+				} else {
+					palavrasTraduzidas = dicionario.traduzirParaIdioma(termo);
+				}
+				
+				if (palavrasTraduzidas.isEmpty()) {
+					limparCampos(resultadoLocalização, resultadoTradução, feedback);
+					feedback.setText("Nenhuma tradução encontrada!");
+					
+				} else {
+					limparCampos(resultadoLocalização, resultadoTradução, feedback);
+					for (String palavra : palavrasTraduzidas) {
+						resultadoTradução.append(palavra + "\n");
+					}
+					feedback.setText("Tradução feita com sucesso!");
+				}
+
+			}
+		});
+
+		btnTraduzir.setBounds(293, 191, 105, 27);
+		frameDicionário.getContentPane().add(btnTraduzir);
 	}
 
 	
@@ -230,4 +255,11 @@ public class TelaDicionário {
 		dicionario.setIdioma(idiomasAtuais.get(0));
 		dicionario.setIdiomaDestino(idiomasAtuais.get(1));
 	}
+	
+	private void limparCampos(JTextArea localizaoArea, JTextArea traducaoArea, JLabel feedback) {
+		localizaoArea.setText("");
+		traducaoArea.setText("");
+		feedback.setText("");
+	}
+
 }

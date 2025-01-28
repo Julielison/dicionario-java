@@ -2,13 +2,10 @@ package main;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JComboBox;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
 
 public class Dicionario {
 	private String idiomaCorrente;
@@ -53,20 +50,20 @@ public class Dicionario {
 	}
 	
 	public ArrayList<String> traduzirParaPortugues(String termo) {
-        return obterTraducoes(termo);
+        return obterTraducoes(termo, 1);
     }
 	
 	public ArrayList<String> traduzirParaIdioma(String termo) {
-		return obterTraducoes(termo);
+		return obterTraducoes(termo, 0);
 	}
 	
-	public ArrayList<String> obterTraducoes(String termo) {
+	public ArrayList<String> obterTraducoes(String termo, int idIdioma) {
 		ArrayList<String> traducoes = new ArrayList<String>();
 		
-		for (String elemento : carregarParesDeTraducao()) {
-			String[] parTraducao = elemento.split(";");
-			if (parTraducao[0].equalsIgnoreCase(termo)) {
-				traducoes.add(parTraducao[1]);
+		for (String string : carregarParesDeTraducao()) {
+			String[] parTraducao = string.split(";");
+			if (parTraducao[idIdioma].equalsIgnoreCase(termo)) {
+				traducoes.add(parTraducao[(idIdioma-1)*-1]);
 			}
 		}
 		return traducoes;
@@ -85,9 +82,9 @@ public class Dicionario {
 		
 		for (String string : carregarParesDeTraducao()) {
 			String[] parTraducao = string.split(";");
-			String palavra = parTraducao[idIdioma];
+			String palavra = parTraducao[idIdioma].toLowerCase();
 			
-			if (palavra.contains(termo)) {
+			if (palavra.contains(termo.toLowerCase())) {
 				palavrasLocalizadas.add(palavra);
 			}
 		}
@@ -101,8 +98,7 @@ public class Dicionario {
 		if (idiomaDestino.equalsIgnoreCase("Português")) {
 			idiomaArquivo = idiomaCorrente;
 		}
-		try {
-        	Scanner scanner = new Scanner(new File("src/dados/" + idiomaArquivo +".csv"));
+		try (Scanner scanner = new Scanner(new File("src/dados/" + idiomaArquivo +".csv"))) {
         	scanner.nextLine();
         	while (scanner.hasNext()) {
         		String linha = scanner.nextLine();
