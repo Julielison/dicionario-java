@@ -3,9 +3,11 @@ package main;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.JComboBox;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
 
 public class Dicionario {
@@ -23,11 +25,11 @@ public class Dicionario {
 	
 	private boolean idiomaExiste(String x) {
 		for (String idioma : idiomasArrayList) {
-			if (!idioma.equalsIgnoreCase(x)) {
-				return false;
+			if (idioma.equalsIgnoreCase(x)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	public ArrayList<String> getIdiomas() {
@@ -36,6 +38,18 @@ public class Dicionario {
 	
 	public void setIdioma(String x) {
 		this.idiomaCorrente = x;
+	}
+	
+	public void setIdiomaDestino(String y) {
+		this.idiomaDestino = y;
+	}
+	
+	public String getIdiomaCorrente() {
+		return idiomaCorrente;
+	}
+	
+	public String getIdiomaDestino() {
+		return idiomaDestino;
 	}
 	
 	public ArrayList<String> traduzirParaPortugues(String termo) {
@@ -59,26 +73,21 @@ public class Dicionario {
 	}
 	
 	public ArrayList<String> localizarPalavraIdioma(String termo) {
-		return localizarPalavra(termo);
+		return localizarPalavra(termo, 0);
 	}
 	
 	public ArrayList<String> localizarPalavraPortugues(String termo) {
-		return localizarPalavra(termo);
+		return localizarPalavra(termo, 1);
 	}
 	
-	public ArrayList<String> localizarPalavra(String termo) {
+	public ArrayList<String> localizarPalavra(String termo, int idIdioma) {
 		ArrayList<String> palavrasLocalizadas = new ArrayList<String>();
 		
-		int index = 0;
-		if (idiomaCorrente.equalsIgnoreCase("Português")) {
-			index = 1;
-		}
-		
-		for (String string : palavrasLocalizadas) {
+		for (String string : carregarParesDeTraducao()) {
 			String[] parTraducao = string.split(";");
-			String palavra = parTraducao[index];
+			String palavra = parTraducao[idIdioma];
 			
-			if (palavra.contains(string)) {
+			if (palavra.contains(termo)) {
 				palavrasLocalizadas.add(palavra);
 			}
 		}
@@ -103,5 +112,17 @@ public class Dicionario {
 			System.out.println(e.getMessage());
 		}
 		return paresDeTraducao;
+	}
+	
+	public ArrayList<String> montarStringDeTraducao(JComboBox<String> jComboBoxTraducao) {
+		ArrayList<String> parTraducoesList = new ArrayList<String>();
+		String espaços = " ".repeat(6);
+		String meioString = espaços + ">" + espaços;
+		
+		for (int i = 1; i < idiomasArrayList.size(); i++) {
+			parTraducoesList.add(idiomasArrayList.get(0) + meioString + idiomasArrayList.get(i));
+			parTraducoesList.add(idiomasArrayList.get(i) + meioString + idiomasArrayList.get(0));
+		}
+		return parTraducoesList;
 	}
 }
