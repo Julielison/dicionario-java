@@ -122,6 +122,7 @@ public class TelaDicionário {
 		comboBoxTraducao.setModel(new DefaultComboBoxModel<String>(
 				dicionario.montarStringDeTraducao(comboBoxTraducao).toArray(new String[0])));
 		
+		dicionario.getIdiomaCorrente();
 		definirIdiomasAtuais(comboBoxTraducao.getSelectedItem().toString());
 		definirBandeiras(comboBoxTraducao, labelsBandeiras);
 		
@@ -160,7 +161,8 @@ public class TelaDicionário {
 					for (String palavra : palavrasLocalizadas) {
 						resultadoLocalização.append(palavra + "\n");
 					}
-					feedback.setText("Localização feita com sucesso!");
+					feedback.setText("Localização feita com sucesso! "
+							+ palavrasLocalizadas.size() + " resultado(s)");
 				}
 			}
 		});
@@ -210,7 +212,8 @@ public class TelaDicionário {
 					for (String palavra : palavrasTraduzidas) {
 						resultadoTradução.append(palavra + "\n");
 					}
-					feedback.setText("Tradução feita com sucesso!");
+					feedback.setText("Tradução feita com sucesso! "
+							+ palavrasTraduzidas.size() + " resultado(s).");
 				}
 
 			}
