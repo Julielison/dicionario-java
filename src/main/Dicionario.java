@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.swing.JComboBox;
-
 public class Dicionario {
 	private String idiomaCorrente;
-	private String idiomaDestino;
-	private ArrayList<String> idiomasArrayList = new ArrayList<String>(List.of("Português", "Inglês", "Espanhol", "Alemão"));
+	private ArrayList<String> idiomasArrayList = new ArrayList<String>(List.of("Inglês", "Espanhol", "Alemão"));
  	
 	public Dicionario(String x) throws Exception {
 		if (idiomaExiste(x)) {
@@ -37,24 +34,16 @@ public class Dicionario {
 		this.idiomaCorrente = x;
 	}
 	
-	public void setIdiomaDestino(String y) {
-		this.idiomaDestino = y;
-	}
-	
-	public String getIdiomaCorrente() {
+	public String getIdioma() {
 		return idiomaCorrente;
 	}
 	
-	public String getIdiomaDestino() {
-		return idiomaDestino;
-	}
-	
 	public ArrayList<String> traduzirParaPortugues(String termo) {
-        return obterTraducoes(termo, 1);
+        return obterTraducoes(termo, 0);
     }
 	
 	public ArrayList<String> traduzirParaIdioma(String termo) {
-		return obterTraducoes(termo, 0);
+		return obterTraducoes(termo, 1);
 	}
 	
 	public ArrayList<String> obterTraducoes(String termo, int idIdioma) {
@@ -94,11 +83,7 @@ public class Dicionario {
 	public ArrayList<String> carregarParesDeTraducao (){
 		ArrayList<String> paresDeTraducao = new ArrayList<String>();
 		
-		String idiomaArquivo = idiomaDestino;
-		if (idiomaDestino.equalsIgnoreCase("Português")) {
-			idiomaArquivo = idiomaCorrente;
-		}
-		try (Scanner scanner = new Scanner(new File("src/dados/" + idiomaArquivo +".csv"))) {
+		try (Scanner scanner = new Scanner(new File("src/dados/" + idiomaCorrente +".csv"))) {
         	scanner.nextLine();
         	while (scanner.hasNext()) {
         		String linha = scanner.nextLine();
@@ -108,17 +93,5 @@ public class Dicionario {
 			System.out.println(e.getMessage());
 		}
 		return paresDeTraducao;
-	}
-	
-	public ArrayList<String> montarStringDeTraducao(JComboBox<String> jComboBoxTraducao) {
-		ArrayList<String> parTraducoesList = new ArrayList<String>();
-		String espaços = " ".repeat(6);
-		String meioString = espaços + ">" + espaços;
-		
-		for (int i = 1; i < idiomasArrayList.size(); i++) {
-			parTraducoesList.add(idiomasArrayList.get(0) + meioString + idiomasArrayList.get(i));
-			parTraducoesList.add(idiomasArrayList.get(i) + meioString + idiomasArrayList.get(0));
-		}
-		return parTraducoesList;
 	}
 }

@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 import javax.swing.DefaultComboBoxModel;
@@ -24,7 +23,7 @@ import javax.swing.SwingConstants;
 public class TelaDicionário {
 
 	private JFrame frameDicionário;
-	private JTextField termoDigitado;
+	private JTextField textFieldTermo;
 	static Dicionario dicionario;
 
 	/**
@@ -61,208 +60,174 @@ public class TelaDicionário {
 		frameDicionário.getContentPane().setLayout(null);
 		frameDicionário.setResizable(false);
 
-		
-		JLabel labelBandeira1 = new JLabel("");
-		labelBandeira1.setIcon(new ImageIcon(TelaDicionário.class.getResource("/imagens/Português.png")));
-		labelBandeira1.setBounds(102, 0, 60, 41);
-		frameDicionário.getContentPane().add(labelBandeira1);
-
-		JLabel labelBandeira2 = new JLabel("");
-		labelBandeira2.setIcon(new ImageIcon(TelaDicionário.class.getResource("/imagens/Inglês.png")));
-		labelBandeira2.setBounds(281, 0, 60, 41);
-		frameDicionário.getContentPane().add(labelBandeira2);
-
-		JLabel titulo = new JLabel("TRAIN");
-		titulo.setFont(new Font("Dialog", Font.BOLD, 16));
-		titulo.setBounds(192, 12, 50, 17);
-		frameDicionário.getContentPane().add(titulo);
-
-		JLabel feedback = new JLabel("");
-		feedback.setFont(new Font("Dialog", Font.BOLD, 14));
-		feedback.setBounds(34, 222, 364, 27);
-		frameDicionário.getContentPane().add(feedback);
-
-		termoDigitado = new JTextField();
-		termoDigitado.setFont(new Font("Dialog", Font.PLAIN, 16));
-		termoDigitado.setToolTipText("");
-		termoDigitado.setBounds(35, 91, 182, 26);
-		frameDicionário.getContentPane().add(termoDigitado);
-		termoDigitado.setColumns(10);
+		textFieldTermo = new JTextField();
+		textFieldTermo.setFont(new Font("Dialog", Font.PLAIN, 16));
+		textFieldTermo.setToolTipText("");
+		textFieldTermo.setBounds(35, 59, 148, 27);
+		frameDicionário.getContentPane().add(textFieldTermo);
+		textFieldTermo.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(229, 91, 169, 88);
+		scrollPane.setBounds(195, 110, 203, 121);
 		frameDicionário.getContentPane().add(scrollPane);
 		
-		JTextArea resultadoTradução = new JTextArea();
-		resultadoTradução.setFont(new Font("Dialog", Font.PLAIN, 16));
-		resultadoTradução.setEditable(false);
-		scrollPane.setViewportView(resultadoTradução);
+		JTextArea resultados = new JTextArea();
+		resultados.setFont(new Font("Dialog", Font.PLAIN, 16));
+		resultados.setEditable(false);
+		scrollPane.setViewportView(resultados);
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(34, 123, 183, 56);
-		frameDicionário.getContentPane().add(scrollPane_1);
+		JLabel labelBandeira = new JLabel("");
+		labelBandeira.setBounds(298, 3, 72, 44);
+		frameDicionário.getContentPane().add(labelBandeira);
 		
-		JTextArea resultadoLocalização = new JTextArea();
-		resultadoLocalização.setFont(new Font("Dialog", Font.PLAIN, 16));
-		resultadoLocalização.setEditable(false);
-		scrollPane_1.setViewportView(resultadoLocalização);
-		
-		ArrayList<JLabel> labelsBandeiras = new ArrayList<JLabel>(Arrays.asList(labelBandeira1, labelBandeira2));
-		
-		JComboBox<String> comboBoxTraducao = new JComboBox<String>();
-		comboBoxTraducao.setFont(new Font("Dialog", Font.BOLD, 14));
-		comboBoxTraducao.addActionListener(new ActionListener() {
+		JComboBox<String> comboBoxIdiomaCorrente = new JComboBox<String>();
+		comboBoxIdiomaCorrente.setFont(new Font("Dialog", Font.BOLD, 14));
+		comboBoxIdiomaCorrente.setModel(new DefaultComboBoxModel<>(dicionario.getIdiomas().toArray(new String[0])));
+		comboBoxIdiomaCorrente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				definirBandeiras(comboBoxTraducao, labelsBandeiras);
-				definirIdiomasAtuais(comboBoxTraducao.getSelectedItem().toString());
-				limparCampos(resultadoLocalização, resultadoTradução, feedback);
+				dicionario.setIdioma(comboBoxIdiomaCorrente.getSelectedItem().toString());
+				definirBandeira(labelBandeira);
 			}
 		});
-		
-		comboBoxTraducao.setModel(new DefaultComboBoxModel<String>(
-				dicionario.montarStringDeTraducao(comboBoxTraducao).toArray(new String[0])));
-		
-		dicionario.getIdiomaCorrente();
-		definirIdiomasAtuais(comboBoxTraducao.getSelectedItem().toString());
-		definirBandeiras(comboBoxTraducao, labelsBandeiras);
-		
+		comboBoxIdiomaCorrente.setSelectedItem(dicionario.getIdioma());
+		definirBandeira(labelBandeira);
+
 		// Criando um renderizador personalizado
 		DefaultListCellRenderer renderizador = new DefaultListCellRenderer();
 		renderizador.setHorizontalAlignment(SwingConstants.CENTER); // Centraliza o texto
-		comboBoxTraducao.setRenderer(renderizador);
+		comboBoxIdiomaCorrente.setRenderer(renderizador);
 
-		comboBoxTraducao.setBounds(34, 47, 364, 26);
-		frameDicionário.getContentPane().add(comboBoxTraducao);
+		comboBoxIdiomaCorrente.setBounds(195, 59, 203, 26);
+		frameDicionário.getContentPane().add(comboBoxIdiomaCorrente);
 		
-		JButton btnNewButton = new JButton("Localizar");
-		btnNewButton.addActionListener(new ActionListener() {
+		
+		JComboBox<String> comboBoxFunção = new JComboBox<String>();
+		comboBoxFunção.setFont(new Font("Dialog", Font.BOLD, 14));
+		comboBoxFunção.setModel(new DefaultComboBoxModel<String>(new String[] {"Traduzir para:", "Localizar no:"}));
+		comboBoxFunção.setBounds(35, 111, 148, 26);
+		frameDicionário.getContentPane().add(comboBoxFunção);
+		
+		JLabel lblFuncao = new JLabel("Função dos botões");
+		lblFuncao.setBounds(34, 92, 148, 17);
+		frameDicionário.getContentPane().add(lblFuncao);
+		
+		JLabel lblResultados = new JLabel("Resultados");
+		lblResultados.setBounds(195, 93, 81, 17);
+		frameDicionário.getContentPane().add(lblResultados);
+		
+		JLabel labelFeedback = new JLabel("");
+		labelFeedback.setBounds(34, 232, 364, 17);
+		frameDicionário.getContentPane().add(labelFeedback);
+		
+		JButton btnTdzParaPortuguês = new JButton("Português");
+		btnTdzParaPortuguês.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ArrayList<String> palavrasLocalizadas;
-				String termo = termoDigitado.getText();
+				ArrayList<String> palavrasObtidas;
+				String termo = textFieldTermo.getText();
 				
 				if (termo.isEmpty()) {
-					limparCampos(resultadoLocalização, resultadoTradução, feedback);
-					feedback.setText("Digite alguma coisa!");
+					resultados.setText("");
+					labelFeedback.setText("Digite alguma coisa!");
 					return;
 				}
 				
-				if (dicionario.getIdiomaCorrente().equalsIgnoreCase("Português")) {
-					palavrasLocalizadas = dicionario.localizarPalavraPortugues(termo);
+				if (comboBoxFunção.getSelectedItem().toString().equalsIgnoreCase("Traduzir para:")) {
+					palavrasObtidas = dicionario.traduzirParaPortugues(termo);
 				} else {
-					palavrasLocalizadas = dicionario.localizarPalavraIdioma(termo);
+					palavrasObtidas = dicionario.localizarPalavraPortugues(termo);
 				}
+				resultados.setText("");
 				
-				if (palavrasLocalizadas.isEmpty()) {
-					limparCampos(resultadoLocalização, resultadoTradução, feedback);
-					feedback.setText("Nenhuma palavra localizada!");
-					
+				if (palavrasObtidas.isEmpty()) {
+					labelFeedback.setText("Nenhum resultado encontrado!");
 				} else {
-					limparCampos(resultadoLocalização, resultadoTradução, feedback);
-					for (String palavra : palavrasLocalizadas) {
-						resultadoLocalização.append(palavra + "\n");
+					
+					for (String palavra : palavrasObtidas) {
+						resultados.append(palavra + "\n");
 					}
-					feedback.setText("Localização feita com sucesso! "
-							+ palavrasLocalizadas.size() + " resultado(s)");
+					labelFeedback.setText("Operação feita com sucesso! "
+							+ palavrasObtidas.size() + " resultado(s).");
 				}
 			}
 		});
-		btnNewButton.setBounds(34, 191, 105, 27);
-		frameDicionário.getContentPane().add(btnNewButton);
+
+		btnTdzParaPortuguês.setBounds(34, 142, 149, 27);
+		frameDicionário.getContentPane().add(btnTdzParaPortuguês);
+		
+		JButton btnParaIdioma = new JButton("Idioma");
+		btnParaIdioma.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> palavrasObtidas;
+				String termo = textFieldTermo.getText();
+				
+				if (termo.isEmpty()) {
+					resultados.setText(termo);
+					labelFeedback.setText("Digite alguma coisa!");
+					return;
+				}
+				
+				if (comboBoxFunção.getSelectedItem().toString().equalsIgnoreCase("Traduzir para:")) {
+					palavrasObtidas = dicionario.traduzirParaIdioma(termo);
+				} else {
+					palavrasObtidas = dicionario.localizarPalavraIdioma(termo);
+				}
+				resultados.setText("");
+				
+				if (palavrasObtidas.isEmpty()) {
+					labelFeedback.setText("Nenhum resultado encontrado!");
+				} else {
+					resultados.setText("");
+					
+					for (String palavra : palavrasObtidas) {
+						resultados.append(palavra + "\n");
+					}
+					labelFeedback.setText("Operação feita com sucesso! "
+							+ palavrasObtidas.size() + " resultado(s).");
+				}
+			}
+		});
+		btnParaIdioma.setBounds(34, 172, 149, 27);
+		frameDicionário.getContentPane().add(btnParaIdioma);
+
 		
 		JButton btnLimpar = new JButton("Limpar");
 		btnLimpar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				resultadoTradução.setText("");
-				termoDigitado.setText("");
-				feedback.setText("");
-				resultadoLocalização.setText("");
+				resultados.setText("");
+				textFieldTermo.setText("");
+				labelFeedback.setText("");
 			}
 		});
-		btnLimpar.setBounds(164, 191, 105, 27);
+		btnLimpar.setBounds(35, 204, 148, 27);
 		frameDicionário.getContentPane().add(btnLimpar);
 		
-		JLabel lblNewLabel = new JLabel("Digite aqui:");
-		lblNewLabel.setBounds(35, 76, 88, 17);
-		frameDicionário.getContentPane().add(lblNewLabel);
+		JLabel lblDitgiteAqui = new JLabel("Digite aqui:");
+		lblDitgiteAqui.setBounds(35, 40, 88, 17);
+		frameDicionário.getContentPane().add(lblDitgiteAqui);
 		
-		JButton btnTraduzir = new JButton("Traduzir");
-		btnTraduzir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ArrayList<String> palavrasTraduzidas;
-				String termo = termoDigitado.getText();
-				
-				if (termo.isEmpty()) {
-					limparCampos(resultadoLocalização, resultadoTradução, feedback);
-					feedback.setText("Digite alguma coisa!");
-					return;
-				}
-				
-				if (dicionario.getIdiomaCorrente().equalsIgnoreCase("Português")) {
-					palavrasTraduzidas = dicionario.traduzirParaPortugues(termo);
-				} else {
-					palavrasTraduzidas = dicionario.traduzirParaIdioma(termo);
-				}
-				
-				if (palavrasTraduzidas.isEmpty()) {
-					limparCampos(resultadoLocalização, resultadoTradução, feedback);
-					feedback.setText("Nenhuma tradução encontrada!");
-					
-				} else {
-					limparCampos(resultadoLocalização, resultadoTradução, feedback);
-					for (String palavra : palavrasTraduzidas) {
-						resultadoTradução.append(palavra + "\n");
-					}
-					feedback.setText("Tradução feita com sucesso! "
-							+ palavrasTraduzidas.size() + " resultado(s).");
-				}
-
-			}
-		});
-
-		btnTraduzir.setBounds(293, 191, 105, 27);
-		frameDicionário.getContentPane().add(btnTraduzir);
+		JLabel lblTitulo = new JLabel("TRAIN");
+		lblTitulo.setFont(new Font("Dialog", Font.BOLD, 16));
+		lblTitulo.setBounds(74, 11, 60, 17);
+		frameDicionário.getContentPane().add(lblTitulo);
+		
+		JLabel lblIdiomaCorrente = new JLabel("Idioma corrente");
+		lblIdiomaCorrente.setBounds(195, 40, 112, 17);
+		frameDicionário.getContentPane().add(lblIdiomaCorrente);
 	}
 
 	
-	private void definirBandeiras(JComboBox<String> comboBox, ArrayList<JLabel> labelsBadeiras) {
-		int index = 0;
-		String idiomas = (String) comboBox.getSelectedItem();
-		ArrayList<String> idiomasList = separarIdiomas(idiomas);
-		
-		for (JLabel label : labelsBadeiras) {
-			ImageIcon bandeiraIcon = carregarBandeira(idiomasList.get(index));
-			label.setIcon(new ImageIcon(bandeiraIcon
+	private void definirBandeira(JLabel labelBadeira) {
+			ImageIcon bandeiraIcon = carregarBandeira(dicionario.getIdioma());
+			labelBadeira.setIcon(new ImageIcon(bandeiraIcon
 					.getImage()
 					.getScaledInstance(40, 30, Image.SCALE_DEFAULT)));
-			index++;
-		}
 	}
 	
 	
 	private ImageIcon carregarBandeira(String idioma) {
-		ImageIcon bandeiraIcon = new ImageIcon(
+		return new ImageIcon(
 				Objects.requireNonNull(
 						getClass().
 						getResource("/imagens/" + idioma + ".png")));
-		return bandeiraIcon;
 	}
-	
-	private ArrayList<String> separarIdiomas(String idiomasTraduçãoAtual) {
-		String[] arrayIdiomas = idiomasTraduçãoAtual.replace(" ", "").split(">");
-	    return new ArrayList<>(Arrays.asList(arrayIdiomas));
-	}
-	
-	private void definirIdiomasAtuais(String traduçãoSelecionada) {
-		ArrayList<String> idiomasAtuais = separarIdiomas(traduçãoSelecionada);
-		
-		dicionario.setIdioma(idiomasAtuais.get(0));
-		dicionario.setIdiomaDestino(idiomasAtuais.get(1));
-	}
-	
-	private void limparCampos(JTextArea localizaoArea, JTextArea traducaoArea, JLabel feedback) {
-		localizaoArea.setText("");
-		traducaoArea.setText("");
-		feedback.setText("");
-	}
-
 }
